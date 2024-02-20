@@ -74,7 +74,7 @@ Route::post('/articles', function (Request $request) {
     //$user_id = $request->input('user_id');
     $user_id = 1; 
     //dd($request->collect());
-    
+
 
     //데이터 저장(php)=> pdo객체생성 > 쿼리준비 > 쿼리값 설정 > 실핼
     /*
@@ -124,7 +124,8 @@ Route::get('articles', function(Request $request){
     $perPage = $request->input('per_page', 5);
     //$skip = ($page-1) * $perPage;
 
-    $articles = Article::select('user_id','content','created_at')
+    $articles = Article::with('user')
+    ->select('user_id','content','created_at')
     ->orderby('created_at', 'desc')
     ->paginate($perPage);
 
