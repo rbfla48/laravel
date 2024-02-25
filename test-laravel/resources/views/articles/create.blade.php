@@ -9,7 +9,7 @@
 <body class="bg-blue-300">
     <div class="container p-5">
     <h3 class="text-2xl">글쓰기</h3>
-        <form action="/articles" method="post">
+        <form action="{{ route('article.save') }}" method="post">
             <!--CSRF공격방지기능이 있어 요청시 토큰값을 넘겨주어야함-->
             <input type="hidden" name="_token" value="<?php echo csrf_token();?>">
             <!--OR-->

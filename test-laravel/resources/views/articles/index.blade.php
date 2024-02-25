@@ -12,10 +12,13 @@
     @foreach($articles->all() as $data)
         <div class="background-white border rounded mb-3 p-3">
             <p>no.{{ $loop->iteration }}</p>
-            <p>{{ $data->content }}</p>
+            <p><a href="{{ route('article.show', ['id'=>$data->id]) }}">{{$data->content }}</a></p>
             <!--<p>{{ $data->created_at }}</p>-->
             <p>{{ $data->created_at->diffForHumans() }}</p>
             <p>{{ $data->user->name }}
+            <p class="mt-2">
+                <a href="{{ route('article.edit', ['id'=>$data->id]) }}" class="button rounded bg-blue-500 px-2 py-1 text-xs text-white">수정하기</a>
+            </p>
         </div>
     @endforeach
     </div>

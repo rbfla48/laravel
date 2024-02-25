@@ -44,7 +44,7 @@ require __DIR__.'/auth.php';
 
 Route::get('/articles/create', function () {
     return view('/articles/create');
-});
+})->name('article.create');
 
 Route::post('/articles', function (Request $request) {
     //Laravel 유효성검사 제공기능(메뉴얼 참조)
@@ -117,7 +117,7 @@ Route::post('/articles', function (Request $request) {
 
 
     return "저장되었습니다";
-});
+})->name('article.save');
 
 Route::get('articles', function(Request $request){
     //$page = $request->input('page', 1);
@@ -125,7 +125,7 @@ Route::get('articles', function(Request $request){
     //$skip = ($page-1) * $perPage;
 
     $articles = Article::with('user')
-    ->select('user_id','content','created_at')
+    //->select('user_id','content','created_at')
     ->orderby('created_at', 'desc')
     ->paginate($perPage);
 
@@ -145,4 +145,37 @@ Route::get('articles', function(Request $request){
                                     'totalCount'=>$totalCount,
                                     'perPage'=>$perPage
                                     ]);
-});
+})->name('article.index');
+
+//글 조회
+Route::get('articles/{id}', function($id){
+    $data = Article::find($id);
+    //dd($data);
+
+    return view('articles.show', ['data'=>$data]);
+})->name('article.show');
+
+//글 수정화면
+Route::get('articles/{id}/edit', function($id){
+    $data = Article::find($id);
+    return view('articles.edit', ['data'=>$data]);
+})->name('article.edit');
+
+//글 수정
+Route::put('articles/{id}/update', function(Request $request, Article $article){
+    $input = $request->validate([
+        'content'=>[
+            'required',
+            'string',
+            'max:30'
+        ]
+    ]);
+
+    $article->content = $input['content'];
+    $article->user_id = 1;
+    $article->save();
+
+    return '수정완료';
+    
+})->name('article.update');
+

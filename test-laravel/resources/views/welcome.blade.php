@@ -33,7 +33,10 @@
 
             <div class="max-w-7xl mx-auto p-6 lg:p-8">
                 <div>
-                    <a href="/articles/create">글쓰기</a>
+                   <!-- <a href="/articles/create">글쓰기</a>-->
+                   <a href="{{ route('article.create') }}">글쓰기</a>
+
+                   <a href="{{ route('article.index') }}">글목록</a>
                 </div>
             </div>
         </div>
