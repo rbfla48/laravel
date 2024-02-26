@@ -162,7 +162,7 @@ Route::get('articles/{id}/edit', function($id){
 })->name('article.edit');
 
 //글 수정
-Route::put('articles/{id}/update', function(Request $request, Article $article){
+Route::patch('articles/{id}', function(Request $request, Article $article){
     $input = $request->validate([
         'content'=>[
             'required',
@@ -171,11 +171,19 @@ Route::put('articles/{id}/update', function(Request $request, Article $article){
         ]
     ]);
 
-    $article->content = $input['content'];
-    $article->user_id = 1;
+    //$article->content = $input['content'];
+    $article = Article::find($request->id);
+    $article->content = $request->content;
     $article->save();
 
     return '수정완료';
     
 })->name('article.update');
+
+//글 삭제
+Route::delete('articles/{id}', function(Article $article, $id){
+    $article = Article::find($id);
+    $article->delete();
+    return redirect()->route('article.index');
+})->name('article.delete');
 

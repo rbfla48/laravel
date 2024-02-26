@@ -11,7 +11,7 @@
     <h3 class="text-2xl mb-5">글 수정하기</h3>
     <form action="{{ route('article.update', ['id' => $data->id] ) }}" method="post">
         @csrf
-        @method('put')
+        @method('patch')
         <input type="text" name="content" class="block w-full mb-2 rounded" value="{{old('content') ?? $data->content}}">
         <button class="py-1 px-3 bg-black text-white text-xs rounded">수정하기</button>
     </form>
