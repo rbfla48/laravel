@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use DragonCode\Contracts\Cashier\Auth\Auth;
+//use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+    public function __construct()
+    {
+        //index,show 메서드 auth 미들웨어 적용 제외
+        $this->middleware('auth')->except(['index','show']);
+    }
+    
     public function index(Request $request){
          //$page = $request->input('page', 1);
         $perPage = $request->input('per_page', 5);
@@ -41,7 +48,8 @@ class ArticleController extends Controller
     }
 
 
-    public function save(Request $request){
+    public function store(Request $request){
+        $article = new Article;
         //Laravel 유효성검사 제공기능(메뉴얼 참조)
         $input = $request->validate([
             'content'=>[

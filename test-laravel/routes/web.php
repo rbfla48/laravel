@@ -3,8 +3,8 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Article;
-//use DragonCode\Contracts\Cashier\Auth\Auth;
-use Illuminate\Support\Facades\Auth;
+use DragonCode\Contracts\Cashier\Auth\Auth;
+//use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request as HttpRequest;
@@ -42,11 +42,12 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+
 Route::controller(ArticleController::class)->group(function(){
     //글쓰기
     Route::get('/articles/create', 'create')->name('article.create');
     //글저장
-    Route::post('/articles', 'save')->name('article.save');
+    Route::post('/articles', 'store')->name('article.store');
     //글목록
     Route::get('articles', 'index')->name('article.index');
     //글 조회
@@ -59,4 +60,6 @@ Route::controller(ArticleController::class)->group(function(){
     Route::delete('articles/{id}', 'delete')->name('article.delete');
 });
 
+//리소스컨트롤러
+//Route::resource('article', ArticleController::class);
 

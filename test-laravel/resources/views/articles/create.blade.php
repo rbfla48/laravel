@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글쓰기페이지</title>
-</head>
-<body class="bg-blue-300">
+<x-app-layout>
     <div class="container p-5">
     <h3 class="text-2xl">글쓰기</h3>
-        <form action="{{ route('article.save') }}" method="post">
+        <form action="{{ route('article.store') }}" method="post">
             <!--CSRF공격방지기능이 있어 요청시 토큰값을 넘겨주어야함-->
             <input type="hidden" name="_token" value="<?php echo csrf_token();?>">
             <!--OR-->
@@ -25,5 +17,4 @@
             @endforeach
         @endif
     </div>
-</body>
-</html>
+</x-app-layout>
