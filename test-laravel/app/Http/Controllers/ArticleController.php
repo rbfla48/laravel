@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
-use DragonCode\Contracts\Cashier\Auth\Auth;
-//use Illuminate\Support\Facades\Auth;
+//use DragonCode\Contracts\Cashier\Auth\Auth;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -14,7 +14,7 @@ class ArticleController extends Controller
         //index,show 메서드 auth 미들웨어 적용 제외
         $this->middleware('auth')->except(['index','show']);
     }
-    
+
     public function index(Request $request){
          //$page = $request->input('page', 1);
         $perPage = $request->input('per_page', 5);
@@ -130,12 +130,18 @@ class ArticleController extends Controller
         return view('articles.show', ['data'=>$data]);
     }
 
-    public function edit($id){
+    public function edit($id, Article $article){
+        //권한확인
+        $this->authorize('update', $article);
+
         $data = Article::find($id);
         return view('articles.edit', ['data'=>$data]);
     }
 
-    public function update(Request $request){
+    public function update(Request $request, Article $article){
+        //권한확인
+        $this->authorize('update', $article);
+
         $input = $request->validate([
             'content'=>[
                 'required',
@@ -143,6 +149,7 @@ class ArticleController extends Controller
                 'max:30'
             ]
         ]);
+        
     
         //$article->content = $input['content'];
         $article = Article::find($request->id);
@@ -152,7 +159,10 @@ class ArticleController extends Controller
         return redirect()->route('article.index');
     }
 
-    public function delete($id){
+    public function delete($id, Article $article){
+        //권한확인
+        $this->authorize('update', $article);
+
         $article = Article::find($id);
         $article->delete();
         return redirect()->route('article.index');

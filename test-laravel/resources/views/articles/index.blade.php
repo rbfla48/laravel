@@ -17,14 +17,18 @@
             <p>{{ $data->created_at->diffForHumans() }}</p>
             <p>{{ $data->user->name }}
             <div class="flex flex-row">
+                @can('update',$data)
                 <p>
                     <a href="{{ route('article.edit', ['id'=>$data->id]) }}" class="button rounded bg-blue-500 px-2 py-1 text-xs text-white">수정하기</a>
                 </p>
+                @endcan
+                @can('delete',$data)
                 <form action="{{ route('article.delete', ['id' => $data->id]) }}" method="post">
                     @csrf
                     @method('delete')
                     <button class="py-1 px-2 bg-black text-white text-xs rounded">삭제하기</button>
                 </form>
+                @endcan
             </div>
         </div>
     @endforeach
