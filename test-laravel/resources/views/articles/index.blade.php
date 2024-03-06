@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글목록</title>
-</head>
-<body class="bg-blue-300">
+<x-app-layout>
     <div class="container p-5">
     <h3 class="text-2xl mb-5">글목록</h3>
     @foreach($articles->all() as $data)
@@ -42,5 +34,4 @@
     <div class="container p-5">
         {{ $articles->links() }}
     </div>
-</body>
-</html>
+</x-app-layout>

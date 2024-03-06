@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Requests\CreateArticleRequest;
 //use DragonCode\Contracts\Cashier\Auth\Auth;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,16 +50,11 @@ class ArticleController extends Controller
     }
 
 
-    public function store(Request $request){
+    public function store(CreateArticleRequest $request){
         $article = new Article;
+
         //Laravel 유효성검사 제공기능(메뉴얼 참조)
-        $input = $request->validate([
-            'content'=>[
-                'required',
-                'string',
-                'max:30'
-            ]
-        ]);
+        $input = $request->validate();
 
         //유효성검사
         /*
@@ -138,17 +135,11 @@ class ArticleController extends Controller
         return view('articles.edit', ['data'=>$data]);
     }
 
-    public function update(Request $request, Article $article){
+    public function update(UpdateArticleRequest $request, Article $article){
         //권한확인
-        $this->authorize('update', $article);
-
-        $input = $request->validate([
-            'content'=>[
-                'required',
-                'string',
-                'max:30'
-            ]
-        ]);
+        //$this->authorize('update', $article);
+        
+        $input = $request->validate();
         
     
         //$article->content = $input['content'];

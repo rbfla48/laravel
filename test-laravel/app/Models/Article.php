@@ -9,7 +9,7 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id';
+    //protected $primaryKey = 'id';
 
     public  function user()
     {
