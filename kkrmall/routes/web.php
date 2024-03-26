@@ -1,22 +1,17 @@
 <?php
-
+//Controller
+use App\Http\Controllers\admin\MainController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+//Moddel
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Banner;
+//Utill
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Database\Eloquent\Model;
 
-use App\Models\Banner;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,18 +30,26 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 //관리자페이지
-Route::get('/admin',function () {
-    return view('admin/main');
-});
+Route::get('/admin',[MainController::class,'home'])->name('admin');
+
+Route::get('/admin/orderList',[MainController::class,'orderList'])->name('admin.orderList');
+
+Route::get('/admin/orderInfo/{id}',[MainController::class,'orderInfo'])->name('admin.orderInfo');
+
+Route::get('/admin/productList',[MainController::class,'productList'])->name('admin.productList');
+
+Route::get('/admin/productRegist',[MainController::class,'productRegist'])->name('admin.productRegist');
 
 //홈화면
-Route::get('/home', function () {
-    //배너이미지 조회
-    $bannerData = Banner::where('banner_active', true)
-    ->orderBy('banner_order','ASC')
-    ->get();
+Route::get('/home',[HomeController::class,'home'])->name('home');
 
-    
-    
-    return view('home',['banner'=>$bannerData]);
-});
+
+Route::get('/productDetail/{id}',[ProductController::class,'productDetail'])->name('productDetail');
+
+Route::post('/getOptionPrice',[ProductController::class,'getOptionPrice'])->name('getOptionPrice');
+
+Route::post('/paymentReady',[ProductController::class,'paymentReady'])->name('paymentReady');
+
+Route::get('/paymentCheckout',[ProductController::class,'paymentCheckout'])->name('paymentCheckout');
+
+Route::get('/paymentComplete',[ProductController::class,'paymentComplete'])->name('paymentComplete');
