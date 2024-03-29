@@ -16,6 +16,9 @@
 
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!--나이스페이-->
+    <script src="https://pg-web.nicepay.co.kr/v3/common/js/nicepay-pgweb.js" type="text/javascript"></script>
+
     @vite(['resources/css/headers.css',
         'resources/css/style.css',
         'resources/css/app.css',

@@ -62,13 +62,13 @@
                                         <td>
                                             @switch($list->active)
                                             @case('Y') 
-                                                <button type="button" class="btn btn-primary">판매중</button>
+                                                <a class="btn btn-primary" href="{{ route('admin.productManage',['id'=>$list->id]) }}">판매중</a>
                                                 @break
                                             @case('N') 
-                                                <button type="button" class="btn btn-danger">판매종료</button>
+                                                <a class="btn btn-danger" href="{{ route('admin.productManage',['id'=>$list->id]) }}">판매종료</a>
                                                 @break
                                             @default
-                                                <button type="button" class="btn btnprimary">Error</button>
+                                                <a class="btn btnprimary" href="{{ route('admin.productManage',['id'=>$list->id]) }}">확인필요</a>
                                                 @break
                                             @endswitch
                                         </td>
@@ -84,27 +84,4 @@
             </div>
         </main>
     </body>
-    <script>
-    $(document).ready(function() {
-        $('.datepicker').datepicker({
-            format: "yyyy-mm-dd",
-            language: "ko",
-            prevText: '이전 달',
-            nextText: '다음 달',
-            monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-            monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-            dayNames: ['일', '월', '화', '수', '목', '금', '토'],
-            dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
-            dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-            showMonthAfterYear: true,
-            yearSuffix: '년',
-            autoclose: true,
-            templates: {
-                leftArrow: '&laquo;',
-                rightArrow: '&raquo;',
-            }, //다음달 이전달로 넘어가는 화살표 모양 커스텀 마이징
-         todayHighlight: true, //오늘 날짜에 하이라이팅 기능 기본값 :false
-        })
-    });
-    </script>
 </x-admin-layout>

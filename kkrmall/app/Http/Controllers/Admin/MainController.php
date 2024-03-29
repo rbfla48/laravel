@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductOption;
+use App\Models\ProductContent;
+use Carbon\Carbon;
 
 class MainController extends Controller
 {
@@ -149,4 +152,200 @@ class MainController extends Controller
 
         return view('admin.productRegist');
     }
+
+    //상품등록
+    public function productStore(Request $request){
+        
+        // $validatedData = $request->validate([
+        //     'product_name' => 'required|string',
+        //     'category' => 'required|string',
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date',
+        //     'active' => 'required|char',
+        //     'product_info' => 'required|string',
+        //     'product_normal' => 'required|numeric',
+        //     'product_price' => 'required|numeric',
+        //     'delivery' => 'required|numeric',
+        //     'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        //     // Add validation rules for other fields as needed
+        // ]);
+
+        $nowTime = Carbon::now();
+        $userName = Auth::user()->name;
+
+        //product 저장
+        $product = new Product();
+
+        $product->name = $request->input('product_name');
+        $product->category = $request->input('category');
+        $product->start_date = $request->input('start_date')." 00:00:00";
+        $product->end_date = $request->input('end_date')." 23:59:59";
+        $product->active = $request->input('active');
+        $product->discription= $request->input('product_info');
+        $product->normal = $request->input('product_normal');
+        $product->price = $request->input('product_price');
+        $product->delivery = $request->input('delivery');
+        $product->created_at = $nowTime;
+        $product->created_by = $userName;
+
+        $product->save();
+        $productId = $product->id;
+        
+        //product_option 저장
+        $option = new productOption();
+        $odata = $request->input('option');
+        
+        for($i=0 ; $i < count($odata['name']) ; $i++){
+            $option->product_id = $productId;
+            $option->option_no = $i+1;
+            $option->name = $odata['name'][$i];
+            $option->add_price = $odata['price'][$i];
+            $option->stock = $odata['stock'][$i];
+            $option->active = $odata['active'][$i];
+            $option->created_at = $nowTime;
+            $option->created_by = $userName;
+
+            $option->save();
+        }
+        
+        //이미지파일정보
+        if ($request->hasFile('image')) {
+            //$imagePath = $request->file('image')->store('images'); // /app/images 에 저장
+            $imageFile = $request->file('image');
+            $imageName = $imageFile->getClientOriginalName(); //이미지파일명                     
+            $imageSize = $imageFile->getSize(); //이미지파일 크기
+            $imageExtension = $imageFile->getClientOriginalExtension(); //파일 확장자
+            
+            $imagePath = $imageFile->move(public_path('images'), $imageName); //public의 images폴더에 저장
+        }
+        
+        //product_content 저장
+        $content = new ProductContent();
+        $content->product_id = $productId;
+        $content->type = "thumbnail";
+        $content->name = $imageName;
+        $content->content = "/images/".$imageName;
+        $content->created_at = $nowTime;
+
+        $content->save();
+
+        return redirect()->route('admin.productList')->with('success', 'Product added successfully!');
+    }
+
+    //상품수정화면
+    public function productManage($id){
+        $product = new Product;
+        $product = $product::where('id','=',$id)->first();
+
+        $option = new ProductOption;
+        $option = $option::where('product_id','=',$id)->get();
+
+        $content = new ProductContent;
+        $content = $content::where('product_id','=',$id)->first();
+
+        return view('admin.productManage',['product'=>$product, 'option'=>$option, 'content'=>$content]);
+    }
+
+
+    //상품수정
+    public function productUpdate(Request $request){
+        
+        // $validatedData = $request->validate([
+        //     'product_name' => 'required|string',
+        //     'category' => 'required|string',
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date',
+        //     'active' => 'required|char',
+        //     'product_info' => 'required|string',
+        //     'product_normal' => 'required|numeric',
+        //     'product_price' => 'required|numeric',
+        //     'delivery' => 'required|numeric',
+        //     'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        //     // Add validation rules for other fields as needed
+        // ]);
+
+        $nowTime = Carbon::now();
+        $userName = Auth::user()->name;
+        $productId = $request->product_id;
+
+        //product 수정      
+        $productArr['name'] = $request->input('product_name');
+        $productArr['category'] = $request->input('category');
+        $productArr['start_date'] = $request->input('start_date');
+        $productArr['end_date'] = $request->input('end_date');
+        $productArr['active'] = $request->input('active');
+        $productArr['discription'] = $request->input('product_info');
+        $productArr['normal'] = $request->input('product_normal');
+        $productArr['price'] = $request->input('product_price');
+        $productArr['delivery'] = $request->input('delivery');
+        $productArr['updated_at'] = $nowTime;
+        
+        $product = new Product();
+        $product
+        ->where('id',$productId)
+        ->update($productArr);
+        
+        //product_option 저장
+        
+        $option = new productOption();
+        $odata = $request->input('option');
+
+        for ($i = 0; $i < count($odata['name']); $i++) {
+            $option->updateOrCreate(
+                ['product_id' => (int)$productId, 'option_no' => $i + 1],
+                [
+                    'product_id' => (int)$productId,
+                    'option_no' => $i + 1,
+                    'name' => $odata['name'][$i],
+                    'add_price' => $odata['price'][$i],
+                    'stock' => $odata['stock'][$i],
+                    'active' => $odata['active'][$i],
+                    'updated_at' => $nowTime,
+                    'created_at' => $nowTime,
+                    'created_by' => $userName
+                ]
+            );
+        }
+        
+        // for($i=0 ; $i < count($odata['name']) ; $i++){    
+        //     $optionArr[$i]['id'] = !empty($odata['id'][$i]) ? $odata['id'][$i] : null;
+        //     $optionArr[$i]['name'] = $odata['name'][$i];
+        //     $optionArr[$i]['product_id'] = (int)$productId;
+        //     $optionArr[$i]['option_no'] = $i+1;
+        //     $optionArr[$i]['add_price'] = $odata['price'][$i];
+        //     $optionArr[$i]['stock'] = $odata['stock'][$i];
+        //     $optionArr[$i]['active'] = $odata['active'][$i];
+        //     $optionArr[$i]['created_at'] = $nowTime;
+        //     $optionArr[$i]['created_by'] = $userName;
+        //     $optionArr[$i]['updated_at'] = $nowTime;
+        // }
+
+        // $option->upsert($optionArr,['product_id','option_no'],['name','add_price','stock','active','updated_at']);
+        
+        //이미지파일정보
+        if ($request->hasFile('image')) {
+            //$imagePath = $request->file('image')->store('images'); // /app/images 에 저장
+            $imageFile = $request->file('image');
+            $imageName = $imageFile->getClientOriginalName(); //이미지파일명                     
+            $imageSize = $imageFile->getSize(); //이미지파일 크기
+            $imageExtension = $imageFile->getClientOriginalExtension(); //파일 확장자
+            
+            $imagePath = $imageFile->move(public_path('images'), $imageName); //public의 images폴더에 저장
+
+            //product_content 저장
+            $contentArr['name'] = $imageName;
+            $contentArr['content'] = "/images/".$imageName;
+            $contentArr['updated_at'] = $nowTime;
+
+            $content = new ProductContent();
+            $content
+            ->where('product_id',$productId)
+            ->update($contentArr);
+        }
+        
+
+        return redirect()->route('admin.productManage', ['id' => $productId]);
+    }
+
+
 }

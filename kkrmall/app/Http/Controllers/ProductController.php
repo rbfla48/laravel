@@ -17,10 +17,12 @@ class ProductController extends Controller
 
         $product = $product::select(
                     'product.id as id',
+                    'product.category as category',
                     'product.name as product_name',
                     'product.discription as discription',
                     'product.normal as normal',
                     'product.price as price',
+                    'product.delivery as delivery',
                     DB::raw('round(((product.normal - product.price)/product.normal)*100) as discount'),
                     'product_content.content as content')
         ->join('product_content','product.id', '=', 'product_content.product_id')
@@ -49,7 +51,7 @@ class ProductController extends Controller
 
         $add_price = $option::select('add_price')
         ->where('product_id','=',$product_no)
-        ->where('option_no','=',$option_no)
+        ->where('id','=',$option_no)
         ->value('add_price');
 
         
@@ -65,10 +67,12 @@ class ProductController extends Controller
 
         $data = $product::select(
             'product.id as id',
+            'product.category as category',
             'product.name as product_name',
             'product.discription as discription',
             'product.normal as normal',
             'product.price as price',
+            'product.delivery as delivery',
             'product_option.name as option_name',
             'product_option.add_price as add_price',
             DB::raw('round(((product.normal - product.price)/product.normal)*100) as discount'),
@@ -97,8 +101,12 @@ class ProductController extends Controller
         return view('payment_ready',['data'=>$data,'service_date'=>$service_date]);
     }
 
-    public function paymentCheckout(){
-        return view('payment_checkout');
+    public function paymentCheckout(Request $request, Product $product, ProductOption $option){
+
+        $product = $product::where('id',$request->id)->first();
+        $option = $option::where('product_id',$request->id)->first();
+
+        return view('payment_checkout',['product'=>$product, 'option'=>$option]);
     }
 
     public function paymentComplete(){

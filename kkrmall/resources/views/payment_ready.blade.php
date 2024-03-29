@@ -71,7 +71,11 @@
             </table>
         </div>
         <div class="d-grid gap-2 col-4 mx-auto text-center mt-5">
-            <input type="button" class="btn btn-dark bg-dark text-white" value="주문하기">
+            <form action="{{ route('paymentCheckout') }}"  method="post">
+                @csrf
+                <input type="hidden" name="id" value="{{$data->id}}">
+                <input type="submit" class="btn btn-dark bg-dark text-white" value="주문하기">
+            </form>
         </div>
     </div>
 </x-userBasic-layout>

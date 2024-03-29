@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\MainController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 //Moddel
@@ -38,7 +39,13 @@ Route::get('/admin/orderInfo/{id}',[MainController::class,'orderInfo'])->name('a
 
 Route::get('/admin/productList',[MainController::class,'productList'])->name('admin.productList');
 
+Route::get('/admin/productManage/{id}',[MainController::class,'productManage'])->name('admin.productManage');
+
 Route::get('/admin/productRegist',[MainController::class,'productRegist'])->name('admin.productRegist');
+
+Route::post('/admin/productStore',[MainController::class,'productStore'])->name('admin.productStore');
+
+Route::post('/admin/productUpdate',[MainController::class,'productUpdate'])->name('admin.productUpdate');
 
 //홈화면
 Route::get('/home',[HomeController::class,'home'])->name('home');
@@ -50,6 +57,8 @@ Route::post('/getOptionPrice',[ProductController::class,'getOptionPrice'])->name
 
 Route::post('/paymentReady',[ProductController::class,'paymentReady'])->name('paymentReady');
 
-Route::get('/paymentCheckout',[ProductController::class,'paymentCheckout'])->name('paymentCheckout');
+Route::post('/paymentCheckout',[ProductController::class,'paymentCheckout'])->name('paymentCheckout');
 
-Route::get('/paymentComplete',[ProductController::class,'paymentComplete'])->name('paymentComplete');
+Route::post('/paymentResult',[PaymentController::class,'paymentResult'])->name('paymentResult');
+
+Route::post('/paymentComplete',[ProductController::class,'paymentComplete'])->name('paymentComplete');

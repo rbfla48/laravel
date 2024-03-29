@@ -5,52 +5,53 @@
             <div class="container-fluid px-4">
                 <h3 class="mt-4">상품관리</h3>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">상품관리>상품등록</li>
+                    <li class="breadcrumb-item active">상품관리>상품상세</li>
                 </ol>
                 <div class="row g-5">
                     <div class="col-md-7 col-lg-8">
-                        <h4 class="mb-3">상품등록</h4>
-                        <form class="product-form" method="POST" action="{{ route('admin.productStore') }}" enctype="multipart/form-data">
+                        <h4 class="mb-3">상품수정</h4>
+                        <form class="product-form" method="POST" action="{{ route('admin.productUpdate') }}" enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
                             <div class="row g-3">
                                 <div class="col-sm-8">
                                     <label for="product_name" class="form-label">상품명</label>
                                     <input type="text" class="form-control" name="product_name" id="product_name"
-                                        value="{{ old('product_name') }}">
+                                        value="{{ $product->name }}">
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="category" class="form-label">카테고리</label>
-                                    <select class="form-select" id="category" name="category"  value="{{ old('category') }}">
+                                    <select class="form-select" id="category" name="category">
                                         <option value="">--선택--</option>
-                                        <option value="bed_room">침실</option>
-                                        <option value="kitchen">주방</option>
-                                        <option value="living_room">거실장</option>
-                                        <option value="home_deco">홈데코</option>
+                                        <option value="bed_room" {{ $product->category == 'bed_room' ? 'selected' : '' }}>침실</option>
+                                        <option value="kitchen" {{ $product->category == 'kitchen' ? 'selected' : '' }}>주방</option>
+                                        <option value="living_room" {{ $product->category == 'living_room' ? 'selected' : '' }}>거실장</option>
+                                        <option value="home_deco" {{ $product->category == 'home_deco' ? 'selected' : '' }}>홈데코</option>
                                     </select>
                                 </div>
 
                                 <div class="col-sm-4">
                                     <label for="start_date" class="form-label">판매시작일</label>
-                                    <input type="text" class="datepicker form-control" name="start_date" id="start_date" value="{{ old('start_date') }}">
+                                    <input type="text" class="datepicker form-control" name="start_date" id="start_date" value="{{ $product->start_date }}">
                                 </div>
                                 <div class="col-sm-4">
                                     <label for="end_date" class="form-label">판매종료일</label>
-                                    <input type="text" class="datepicker form-control" name="end_date" id="end_date" value="{{ old('end_date') }}">
+                                    <input type="text" class="datepicker form-control" name="end_date" id="end_date" value="{{ $product->end_date }}">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="active" class="form-label">노출여부</label>
-                                    <select class="form-select" id="active" name="active" value="{{ old('active') }}">
+                                    <select class="form-select" id="active" name="active">
                                         <option value="">--선택--</option>
-                                        <option value="Y">노출</option>
-                                        <option value="N">비노출</option>
+                                        <option value="Y" {{ $product->active == 'Y' ? 'selected' : '' }}>노출</option>
+                                        <option value="N" {{ $product->active == 'N' ? 'selected' : '' }}>비노출</option>
                                     </select>
                                 </div>
 
                                 <div class="col-sm-12">
                                     <label for="product_info" class="form-label">상품설명</label>
                                     <input type="text" class="form-control" name="product_info" id="product_info"
-                                        value="{{ old('product_info') }}">
+                                        value="{{ $product->discription }}">
                                 </div>
 
                                 <hr class="mt-5">
@@ -59,21 +60,21 @@
                                 <div class="col-sm-6">
                                     <label for="product_normal" class="form-label">정상가</label>
                                     <input type="text" class="form-control" name="product_normal" id="product_normal"
-                                        value="{{ old('product_normal') }}">
+                                        value="{{ $product->normal }}">
                                 </div>
 
                                 <div class="col-sm-6">
                                     <label for="product_price" class="form-label">판매가</label>
                                     <input type="text" class="form-control" name="product_price" id="product_price"
-                                        value="{{ old('product_price') }}">
+                                        value="{{ $product->price }}">
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="delivery" class="form-label">배송비 설정</label>
-                                    <select class="form-select" id="delivery" name="delivery" value="{{ old('delivery') }}">
+                                    <select class="form-select" id="delivery" name="delivery">
                                         <option value="">--선택--</option>
-                                        <option value="0">배송비 무료</option>
-                                        <option value="3000">3000원</option>
+                                        <option value="0" {{ $product->delivery == '0' ? 'selected' : '' }}>배송비 무료</option>
+                                        <option value="3000" {{ $product->delivery == '3000' ? 'selected' : '' }}>3000원</option>
                                     </select>
                                 </div>
 
@@ -94,35 +95,38 @@
                                         <th class="col"></th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td></td>
-                                            <td><input type="text" class="form-control" name="option[name][]" value=""></td>
-                                            <td><input type="text" class="form-control" name="option[price][]" value=""></td>
-                                            <td><input type="text" class="form-control" name="option[stock][]" value=""></td>
-                                            <td>
-                                                <select class="form-select" name="option[active][]">
-                                                    <option value="">--선택--</option>
-                                                    <option value="Y">노출</option>
-                                                    <option value="N">비노출</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="button" class="btn btn-danger" id="btn-delete-row" onclick="delete_option_row(this)" value="X"></td>
-                                        </tr>
+                                        @foreach($option as $item)
+                                            <tr>
+                                                <input type="hidden" name="option['id'][]" value="{{ $item->id }}">
+                                                <input type="hidden" name="option['product_id'][]" value="{{ $product->id }}">
+                                                <input type="hidden" name="option['option_no'][]" value="{{ $item->option_no }}">
+                                                <td>{{ $item->option_no }}</td>
+                                                <td><input type="text" class="form-control" name="option[name][]" value="{{ $item->name}}"></td>
+                                                <td><input type="text" class="form-control" name="option[price][]" value="{{ $item->add_price}}"></td>
+                                                <td><input type="text" class="form-control" name="option[stock][]" value="{{ $item->stock}}"></td>
+                                                <td>
+                                                    <select class="form-select" name="option[active][]">
+                                                        <option value="">--선택--</option>
+                                                        <option value="Y" {{ $item->active == 'Y' ? 'selected' : '' }}>노출</option>
+                                                        <option value="N" {{ $item->active == 'N' ? 'selected' : '' }}>비노출</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="button" class="btn btn-danger" id="btn-delete-row" disabled value="X"></td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
 
                                 <hr class="my-4">
                                 <h4 class="mb-3">상품이미지</h4>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <input type="file" class="form-control mb-4" id="imageInput" name="image" accept=".jpg, .png">
 
-                                <div class="col-sm-6">
-                                    <input type="file" class="form-control" id="imageInput" name="image"
-                                        accept=".jpg, .png">
-                                </div>
-                                <div class="col-sm-3">
-                                    <button class="btn btn-dark text-white" type="submit">썸네일 업로드</button>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div id="preview"></div>
+                                        <div id="preview">
+                                            <img src="{{ $content->content }}" style="width: 300px; height: 300px;" />
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -130,7 +134,7 @@
 
                             <hr class="my-4">
 
-                            <button class="w-100 btn btn-success btn-lg" type="submit">저장하기</button>
+                            <button class="w-100 btn btn-primary btn-lg" type="submit">수정하기</button>
                         </form>
                     </div>
                 </div>
@@ -165,6 +169,9 @@
         function add_option_row(){
             $('#option_table > tbody:last').append(
                                             '<tr>'+
+                                                '<input type="hidden" name="option[id][]" value="">'+
+                                                '<input type="hidden" name="option[product_id][]" value="">'+
+                                                '<input type="hidden" name="option[option_no][]" value="">'+
                                                 '<td></td>'+
                                                 '<td><input type="text" class="form-control" name="option[name][]" value=""></td>'+
                                                 '<td><input type="text" class="form-control" name="option[price][]" value=""></td>'+

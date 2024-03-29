@@ -2,6 +2,8 @@
 
     <div class="container mb-5">
         <main>
+            <form name="payForm" method="post" action="{{ route('paymentResult')}}>
+            @csrf
             <div class="py-5 mb-9 text-center">
                 <img class="d-block mx-auto mb-4" src="/images/kkrmall_logo.png" width="100" height="70">
                 <h2 class="fs-5">ORDER</h2>
@@ -18,8 +20,8 @@
                             <div style="width: 3rem;"><img src="/images/product_bed1.jpeg"
                                     class="img-fluid img-thumbnail"></div>
                             <div class="w-50">
-                                <h6 class="my-0">상품명</h6>
-                                <small class="text-body-secondary">옵션명</small>
+                                <h6 class="my-0">{{ $product->name }}</h6>
+                                <small class="text-body-secondary">{{ $option->name }}</small>
                             </div>
                             <span class="text-body-secondary">&#x20a9;102,000</span>
                         </li>
@@ -47,7 +49,7 @@
                     </ul>
 
                     <div class="card d-grid gap-2 col-12 mx-auto text-center">
-                        <input type="button" class="btn btn-dark bg-dark text-white" value="결제하기">
+                        <input type="button" class="btn btn-dark bg-dark text-white" onclick="serverAuth()" value="결제하기">
                     </div>
 
                 </div>
@@ -56,28 +58,27 @@
                 <!--주문정보-->
                 <div class="col-md-7 col-lg-8 mb-6">
                     <h4 class="mb-3">주문자 정보</h4>
-                    <form class="order-form" novalidate>
                         <div class="row g-3">
                             <div class="col-sm-3">
                                 <label for="username" class="form-label">받으시는분 *</label>
-                                <input type="text" class="form-control" id="username" placeholder="" value="" required>
+                                <input type="text" class="form-control" id="username" placeholder="" value="">
                             </div>
 
                             <div class="col-12">
                                 <label for="username" class="form-label">주소 *</label>
                                 <div class="flex col-sm-3 mb-3">
                                     <input type="text" class="form-control me-3" id="zip_code" name="zip_code"
-                                        placeholder="" value="" required>
+                                        placeholder="" value="">
                                     <input type="button" class="btn btn-light text-dark" id="btn-address" value="우편번호"
                                         onclick="daumPostcode()">
                                 </div>
                                 <div class="flex col-sm-9 mb-3">
                                     <input type="text" class="form-control" id="address1" name="address1"
-                                        placeholder="기본주소" value="" required>
+                                        placeholder="기본주소" value="">
                                 </div>
                                 <div class="flex col-sm-9 mb-3">
                                     <input type="text" class="form-control" id="address2" name="address2"
-                                        placeholder="나머지주소" value="" required>
+                                        placeholder="나머지주소" value="">
                                 </div>
                             </div>
 
@@ -141,26 +142,42 @@
 
                         <div class="my-3">
                             <div class="form-check">
-                                <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked
-                                    required>
+                                <input id="PayMethod" name="PayMethod" type="radio" class="form-check-input">
                                 <label class="form-check-label" for="credit">신용카드</label>
                             </div>
                             <div class="form-check">
-                                <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
+                                <input id="debit" name="paymentMethod" type="radio" class="form-check-input">
                                 <label class="form-check-label" for="debit">무통장입금</label>
                             </div>
                             <div class="form-check">
-                                <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
+                                <input id="paypal" name="paymentMethod" type="radio" class="form-check-input">
                                 <label class="form-check-label" for="naverPay">네이버페이</label>
                             </div>
                         </div>
                         
                         <hr class="my-4">
-
-                    </form>
+                        
+                    </div>
                 </div>
-            </div>
+            </form>
         </main>
     </div>
 
+    <script src="https://pay.nicepay.co.kr/v1/js/"></script> <!-- 나이스페이 결제창 JS SDK -->
+    <script type="text/javascript">
+    
+    function serverAuth() {
+      AUTHNICE.requestPay({
+        clientId: 'S2_958cdcbe24a84a13a59c0edb91263dd6',
+        method: 'card',
+        orderId: 'kkr12345678',
+        amount: 1004,
+        goodsName: '{{ $product->name }}',
+        returnUrl: "{{ route('paymentResult') }}", //API를 호출할 Endpoint 입력
+        fnError: function (result) {
+            location.replace();
+        }
+      });
+    }
+    </script>
 </x-userBasic-layout>

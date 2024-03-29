@@ -30,7 +30,13 @@
                     <hr>
                     <div class="row d-flex mt-2">
                         <p>{{ $product->discription }}</p>
-                        <p class="mt-2"><span class="lead me-5">배송비</span>배송비 : &#x20a9;3000</p>
+                        <p class="mt-2"><span class="lead me-5">배송비</span>
+                            @if($product->delivery == 0)
+                                무료배송
+                            @else
+                                &#x20a9;{{ number_format($product->delivery) }}
+                            @endif
+                        </p>
                     </div>
                     <div class="d-flex mt-5">
                         <select class="form-select" id="option_no" name="option_no" aria-label="Default select example" data-url="{{ route('getOptionPrice') }}">
