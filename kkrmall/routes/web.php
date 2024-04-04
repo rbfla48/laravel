@@ -9,13 +9,36 @@ use App\Http\Controllers\ProfileController;
 //Moddel
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Banner;
+use App\Models\Product;
+use App\Models\User;
 //Utill
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Auth;
+
 
 
 Route::get('/', function () {
-    return view('welcome');
+    //상단배너 슬라이드이미지
+    $bannerData = Banner::where('banner_active', true)
+    ->orderBy('banner_order','ASC')
+    ->get();
+
+    //하단 상품 슬라이드
+    $product = Product::select(
+                                'product.id as id',
+                                'product.name as product_name',
+                                'product.normal as normal',
+                                'product.price as price',
+                                DB::raw('round(((product.normal - product.price)/product.normal)*100) as discount'), // 연산 부분을 DB::raw()로 랩핑
+                                'product_content.content as content')
+    ->join('product_content','product.id', '=', 'product_content.product_id')
+    ->where('product_content.type', '=', 'thumbnail')
+    ->get();
+    
+    return view('home',['banner'=>$bannerData,'product'=>$product]);
 });
 
 Route::get('/dashboard', function () {
@@ -29,6 +52,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
 
 //관리자페이지
 Route::get('/admin',[MainController::class,'home'])->name('admin');
@@ -48,8 +72,7 @@ Route::post('/admin/productStore',[MainController::class,'productStore'])->name(
 Route::post('/admin/productUpdate',[MainController::class,'productUpdate'])->name('admin.productUpdate');
 
 //홈화면
-Route::get('/home',[HomeController::class,'home'])->name('home');
-
+//Route::get('/home',[HomeController::class,'home'])->name('home');
 
 Route::get('/productDetail/{id}',[ProductController::class,'productDetail'])->name('productDetail');
 

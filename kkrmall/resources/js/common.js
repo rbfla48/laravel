@@ -27,3 +27,25 @@ function select_option(){
         }
     });
 }
+
+
+function logout(){
+    if(confirm("로그아웃 하시겠습니까?")){
+        $.ajax({
+            //아래 headers에 반드시 token을 추가해줘야 한다.!!!!! 
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type: 'post',
+            url: "{{ route('logout') }}",
+            success: function(data) {
+                    console.log(data);
+            },
+            error: function(data) {
+                    console.log("error" +data);
+            }
+        });
+
+    }else{
+        return false;
+    }
+
+}

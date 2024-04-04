@@ -70,15 +70,20 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::user()->name }}님
                         </a>
-                        <ul class="dropdown-menu text-small shadow">
-                            <li><a href="#" class="nav-link px-2 text-secondary">내정보</a></li>
-                            <li><a href="#" class="nav-link px-2 text-secondary">고객문의</a></li>
-                            <li><a href="#" class="nav-link px-2 text-secondary">로그아웃</a></li>
+                        <ul class="dropdown-menu text-large shadow">
+                            <li><a href="#" class="nav-link px-2 link-secondary">내정보</a></li>
+                            <li><a href="#" class="nav-link px-2 link-secondary">고객문의</a></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <div class="nav-link px-2 link-secondary" style="cursor:pointer;" onclick="event.preventDefault(); this.closest('form').submit();">로그아웃</div>
+                                </form>
+                            </li>
                         </ul>
                     @endauth
                     @guest
                         <button type="button" class="btn btn-outline-light me-2">로그인</button>
-                        <button type="button" class="btn btn-warning">회원가입</button>
+                        <a href="{{ route('register') }}" class="btn btn-datk ml-7 font-semibold dark:hover:text-dark focus:outline">회원가입</a>
                     @endguest
                 </div>
             </div>
