@@ -13,9 +13,9 @@ class UserBasicLayout extends Component
      */
     public function render(): View
     {
-        $menudata = Menu::where('parent_id', NULL)
-        ->get();
+        // $menudata = Menu::where('parent_id', NULL)
+        // ->get();
 
-        return view('layouts.userBasic',['menu'=>$menudata]);
+        return view('layouts.userBasic');
     }
 }

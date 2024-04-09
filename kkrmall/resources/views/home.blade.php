@@ -1,5 +1,4 @@
 <x-userBasic-layout>
-
     <main>
         <!-- 중간 이미지 슬라이드 -->
         <div id="carouselExampleSlidesOnly" class="carousel slide mt-5" data-bs-ride="carousel">
@@ -8,7 +7,7 @@
                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
-            <div class="carousel-inner" style="width:100%; height:350px">
+            <div class="carousel-inner" style="width:100%; height:750px">
                 @foreach($banner as $item)
                     <div
                         class="carousel-item {{ $loop->first ? 'active' : '' }}">

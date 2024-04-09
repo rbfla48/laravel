@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     //상단배너 슬라이드이미지
-    $bannerData = Banner::where('banner_active', true)
+    $bannerData = Banner::where('banner_active', 'Y')
     ->orderBy('banner_order','ASC')
     ->get();
 
