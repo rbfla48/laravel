@@ -1,8 +1,12 @@
 <x-userBasic-layout>
 
     <div class="container mb-5">
+        @auth
+            <input type="hidden" id="user_id" value="{{ Auth::User()->id }}">
+        @endauth
+
         <main>
-            <form name="payForm" method="post" action="{{ route('paymentResult')}}>
+            <form name="payForm" method="post" action="{{ route('paymentResult')}}">
             @csrf
             <div class="py-5 mb-9 text-center">
                 <img class="d-block mx-auto mb-4" src="/images/kkrmall_logo.png" width="100" height="70">
@@ -59,9 +63,15 @@
                 <div class="col-md-7 col-lg-8 mb-6">
                     <h4 class="mb-3">주문자 정보</h4>
                         <div class="row g-3">
-                            <div class="col-sm-3">
-                                <label for="username" class="form-label">받으시는분 *</label>
-                                <input type="text" class="form-control" id="username" placeholder="" value="">
+                            <div class="flex justify-content-between col-9">
+                                <div class="col-sm-3">
+                                    <label for="username" class="form-label">받으시는분 *</label>
+                                    <input type="text" class="form-control" id="username" placeholder="" value="">
+                                </div>
+                                <div>
+                                    <input type="checkbox" class="btn-check" id="get_user_btn" autocomplete="off">
+                                    <label class="btn btn-secondary" for="get_user_btn">회원정보와 동일</label>
+                                </div>
                             </div>
 
                             <div class="col-12">
@@ -98,7 +108,7 @@
                                     <input class="form-control" id="phone_2" name="phone[]" maxlength="4"
                                         fw-filter="isNumber&amp;isFill" size="4" value="" type="text">
                                     <span class="mx-2 align-middle">-</span>
-                                    <input class="form-control" id="ophone3" name="phone[]" maxlength="4"
+                                    <input class="form-control" id="phone_3" name="phone[]" maxlength="4"
                                         fw-filter="isNumber&amp;isFill" size="4" value="" type="text">
                                 </div>
                             </div>
@@ -112,7 +122,7 @@
                               </div>
                             </div>
      
-                            <div class="col-3">
+                            <div class="col-12">
                                 <label for="meno" class="form-label">배송요청사항</label>
                                 <input type="text" class="form-control" id="meno" value="">
                             </div>
@@ -121,16 +131,16 @@
                         <hr class="my-4">
 
                         <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="same-address">
-                            <label class="form-check-label" for="same-address">이용약관에 대하여 동의합니다.</label>
+                            <input type="checkbox" class="form-check-input" id="use_agree">
+                            <label class="form-check-label" for="use_agree">이용약관에 대하여 동의합니다.</label>
                         </div>
                         <div class="col-12 mt-3">
                           <textarea class="w-100">이용약관입니다.</textarea>
                         </div>
 
                         <div class="form-check mt-2">
-                            <input type="checkbox" class="form-check-input" id="save-info">
-                            <label class="form-check-label" for="save-info">개인정보취급방침에 대하여 동의합니다.</label>
+                            <input type="checkbox" class="form-check-input" id="privacy_agree">
+                            <label class="form-check-label" for="privacy_agree">개인정보취급방침에 대하여 동의합니다.</label>
                         </div>
                         <div class="col-12 mt-3">
                           <textarea class="w-100">개인정보취급방침</textarea>
@@ -167,17 +177,76 @@
     <script type="text/javascript">
     
     function serverAuth() {
-      AUTHNICE.requestPay({
-        clientId: 'S2_958cdcbe24a84a13a59c0edb91263dd6',
-        method: 'card',
-        orderId: 'kkr12345678',
-        amount: 1004,
-        goodsName: '{{ $product->name }}',
-        returnUrl: "{{ route('paymentResult') }}", //API를 호출할 Endpoint 입력
-        fnError: function (result) {
-            location.replace();
+        if($("#use_agree").is(":checked") == false){
+            alert("이용약관에 동의해주세요.");
+            return false;
         }
-      });
+        if($("#privacy_agree").is(":checked") == false){
+            alert("개인정보 취급방침에 동의해주세요.");
+            return false;
+        }
+
+        AUTHNICE.requestPay({
+            clientId: 'S2_958cdcbe24a84a13a59c0edb91263dd6',
+            method: 'card',
+            orderId: 'kkr'+Math.floor(Math.random()*10+1),
+            amount: '{{ $product->price }}',
+            goodsName: '{{ $product->name }}',
+            mallReserved: 'pno:{{$product->id}},ono:{{$option->option_no}}',
+            returnUrl: "{{ route('paymentResult') }}", //API를 호출할 Endpoint 입력
+            fnError: function (result) {
+                location.replace();
+            }
+        });
     }
+
+    $(document).ready(function(){
+        $("#get_user_btn").change(function(){
+            if($("#get_user_btn").is(":checked")){
+
+                var user_id = $("#user_id").val();
+
+                if(user_id != ''){
+                
+                    $.ajax({
+                        //아래 headers에 반드시 token을 추가해줘야 한다.!!!!! 
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        type: 'post',
+                        data: {user_id:user_id},
+                        url: "{{ route('getUserInfo') }}",
+                        success: function(data) {
+                                console.log(data);
+                                $('#username').val(data.name);
+                                $('#zip_code').val(data.zip_code);
+                                $('#address1').val(data.address);
+                                $('#address2').val(data.address_detail);
+                                $('#phone_2').val(data.phone.substr(3, 4));
+                                $('#phone_3').val(data.phone.substr(7, 4));
+                                $('#email_1').val(data.email.substr(0, data.email.indexOf('@')));
+                                $('#email_2').val(data.email.substr(data.email.indexOf('@')+1));
+                        },
+                        error: function(data) {
+                                console.log("error" +data);
+                        }
+                    });
+
+                }else{
+                    alert("로그인후 가능합니다!");
+                    return false;
+                }
+            }else{
+                $('#username').val('');
+                $('#zip_code').val('');
+                $('#address1').val('');
+                $('#address2').val('');
+                $('#phone_2').val('');
+                $('#phone_3').val('');
+                $('#email_1').val('');
+                $('#email_2').val('');
+            }
+
+        });
+    });
+
     </script>
 </x-userBasic-layout>

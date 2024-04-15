@@ -13,7 +13,7 @@
                     감사합니다.<br/>
                 </p>
                 <div class="mt-3 d-inline-flex gap-2 mb-5">
-                    <button class="btn btn-dark bg-dark text-center btn-lg px-4 rounded-pill" type="button"  onclick="location.href='{{ route('home') }}'">
+                    <button class="btn btn-dark bg-dark text-center btn-lg px-4 rounded-pill" type="button"  onclick="location.href='/'">
                         홈으로
                     </button>
                     <button class="btn btn-outline-secondary btn-lg px-4 rounded-pill" type="button" onclick="location.href='#'">

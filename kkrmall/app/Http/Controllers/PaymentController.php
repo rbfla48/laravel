@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
+use App\Models\Payment;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -34,7 +38,7 @@ class PaymentController extends Controller
         $mid = $request->clientId;							// 상점 아이디
         $moid = $request->orderId;							// 상점 주문번호
         $amt = $request->amount;							// 결제 금액
-        $reqReserved = $request->ReqReserved;			// 상점 예약필드
+        $reqReserved = $request->mallReserved;			// 상점 예약필드(ReqReserved)
         $netCancelURL = $request->NetCancelURL;			// 망취소 요청 URL
 
         /*  
@@ -58,6 +62,7 @@ class PaymentController extends Controller
 
         $response = "";
 
+
         // 인증 응답으로 받은 Signature 검증을 통해 무결성 검증을 진행하여야 합니다.
         if($authResultCode === "0000" /* && $authSignature == $authComparisonSignature*/){	
             /*
@@ -77,8 +82,49 @@ class PaymentController extends Controller
                     'Amt' => $amt,
                     'EdiDate' => $ediDate,
                     'SignData' => $signData
-                );		
+                );	
+
                 $response = $this->reqPost($data, $nextAppURL); //승인 호출
+                
+                //인증후 주문저장
+                //실제인증은 하지않으므로 response값 확인 생략
+                $stringArr = explode(',',$reqReserved);
+                $product_id = substr($stringArr[0],4,1);
+                $option_no = substr($stringArr[1],4,1);
+                $nowTime = Carbon::now();
+
+                //주문정보 저장
+                $order = new Order();
+
+                $order->user_id = Auth::user()->id;
+                $order->user_name = Auth::user()->name;
+                $order->product_id = $product_id;
+                $order->option_no = $option_no;
+                $order->order_no = $moid;
+                $order->delivery = 'N';
+                $order->payment_date = $nowTime;
+                $order->payment_price = $amt;
+                $order->status = 21;//결제완료
+                $order->order_date = $nowTime;
+                
+                $order->save();
+                $order_id = $order->id;
+                
+
+                //결제정보 저장
+                $payment = new Payment();
+                
+                $payment->user_id = Auth::user()->id;
+                $payment->TID = $txTid;
+                $payment->order_id = $order_id;
+                $payment->MID = $mid;
+                $payment->order_no = $moid;
+                $payment->amount = $amt;
+                $payment->pay_status = 21;
+                $payment->pay_date = $nowTime;
+                
+                $payment->save();
+            
                 
                 //jsonRespDump($response); //response json dump example
                 return view('payment_complete');

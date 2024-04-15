@@ -73,6 +73,7 @@ class ProductController extends Controller
             'product.normal as normal',
             'product.price as price',
             'product.delivery as delivery',
+            'product_option.option_no as option_no',
             'product_option.name as option_name',
             'product_option.add_price as add_price',
             DB::raw('round(((product.normal - product.price)/product.normal)*100) as discount'),
@@ -104,7 +105,7 @@ class ProductController extends Controller
     public function paymentCheckout(Request $request, Product $product, ProductOption $option){
 
         $product = $product::where('id',$request->id)->first();
-        $option = $option::where('product_id',$request->id)->first();
+        $option = $option::where('product_id',$request->id)->where('option_no',$request->option_no)->first();
 
         return view('payment_checkout',['product'=>$product, 'option'=>$option]);
     }

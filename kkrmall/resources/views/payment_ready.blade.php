@@ -74,6 +74,7 @@
             <form action="{{ route('paymentCheckout') }}"  method="post">
                 @csrf
                 <input type="hidden" name="id" value="{{$data->id}}">
+                <input type="hidden" name="option_no" value="{{$data->option_no}}">
                 <input type="submit" class="btn btn-dark bg-dark text-white" value="주문하기">
             </form>
         </div>

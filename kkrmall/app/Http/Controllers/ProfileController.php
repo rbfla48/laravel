@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Models\User;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -56,5 +57,27 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function getUserInfo(Request $request){
+        
+        $id = $request->user_id;
+
+        if(!empty($id)){
+
+            $data = User::find($id)->first();
+
+            if(!empty($data)){
+                $data['code'] = "0000";
+                $data['msg'] = "success";
+            }else{
+                $data['code'] = "0001";
+                $data['msg'] = "not found";
+            }
+        }else{
+            $data['code'] = "0002";
+            $data['msg'] = "no id value!";
+        }
+        return $data;
     }
 }

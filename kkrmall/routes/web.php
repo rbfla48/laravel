@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmailHistoryController;
 //Moddel
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Banner;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -74,6 +76,8 @@ Route::post('/admin/productUpdate',[MainController::class,'productUpdate'])->nam
 //홈화면
 //Route::get('/home',[HomeController::class,'home'])->name('home');
 
+Route::post('/getUserInfo',[ProfileController::class,'getUserInfo'])->name('getUserInfo');
+
 Route::get('/productDetail/{id}',[ProductController::class,'productDetail'])->name('productDetail');
 
 Route::post('/getOptionPrice',[ProductController::class,'getOptionPrice'])->name('getOptionPrice');
@@ -85,3 +89,10 @@ Route::post('/paymentCheckout',[ProductController::class,'paymentCheckout'])->na
 Route::post('/paymentResult',[PaymentController::class,'paymentResult'])->name('paymentResult');
 
 Route::post('/paymentComplete',[ProductController::class,'paymentComplete'])->name('paymentComplete');
+
+//메일전송
+Route::get('/email', function () {
+    return view('emailForm');
+})->name('emailForm');
+
+Route::post('/emailSend', [EmailHistoryController::class, 'emailSend'])->name('emailSend');

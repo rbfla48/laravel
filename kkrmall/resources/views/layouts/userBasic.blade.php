@@ -82,7 +82,7 @@
                         </ul>
                     @endauth
                     @guest
-                        <button type="button" class="btn btn-outline-light me-2">로그인</button>
+                        <a href="{{ route('login') }}" class="btn btn-datk ml-7 font-semibold dark:hover:text-dark focus:outline">로그인</a>
                         <a href="{{ route('register') }}" class="btn btn-datk ml-7 font-semibold dark:hover:text-dark focus:outline">회원가입</a>
                     @endguest
                 </div>
