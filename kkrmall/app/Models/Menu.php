@@ -11,4 +11,5 @@ class Menu extends Model
 
     //Model::preventLazyLoading(! $this->app->isProduction);
     protected $table = 'menus';
+    public $timestamps = false;
 }

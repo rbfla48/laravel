@@ -118,9 +118,6 @@
                                     <input type="file" class="form-control" id="imageInput" name="image"
                                         accept=".jpg, .png">
                                 </div>
-                                <div class="col-sm-3">
-                                    <button class="btn btn-dark text-white" type="submit">썸네일 업로드</button>
-                                </div>
                                 <div class="col-sm-6">
                                     <div id="preview"></div>
                                 </div>
@@ -145,7 +142,7 @@
                 var input = this;
                 var url = $(this).val();
                 var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
-                if (input.files && input.files[0] && (ext == "jpg" || ext == "png")) {
+                if (input.files && input.files[0] && (ext == "jpg" || ext == "png" || ext == "jpeg")) {
                     var reader = new FileReader();
                     
                     reader.onload = function (e) {

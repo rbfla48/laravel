@@ -11,6 +11,7 @@ class Order extends Model
     //use HasFactory;
     use Searchable;
     protected $table = 'order';
+    public $timestamps = false;
 
     public function searchableAs()
     {

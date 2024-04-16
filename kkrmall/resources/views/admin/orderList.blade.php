@@ -60,7 +60,7 @@
                                         <td>{{ $list->order_no }}</td>
                                         <td>{{ $list->username }}</td>
                                         <td>{{ $list->product_name }}</td>
-                                        <td>{{ $list->pcount }}</td>
+                                        <td></td>
                                         <td>{{ $list->order_date }}</td>
                                         <td>
                                             @switch($list->code)

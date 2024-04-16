@@ -11,6 +11,8 @@ use App\Models\Product;
 use App\Models\ProductOption;
 use App\Models\ProductContent;
 use Carbon\Carbon;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class MainController extends Controller
 {
@@ -41,9 +43,8 @@ class MainController extends Controller
                             'order.order_no as order_no',
                             'users.name as username',
                             'product.name as product_name',
-                            'order.pcount as pcount',
                             'order.order_date as order_date',
-                            'status.status as status',
+                            'status.name as status',
                             'status.code as code'
                             )
         ->when($order_no, function($query, $order_no){
@@ -217,6 +218,9 @@ class MainController extends Controller
             $imageExtension = $imageFile->getClientOriginalExtension(); //파일 확장자
             
             $imagePath = $imageFile->move(public_path('images'), $imageName); //public의 images폴더에 저장
+
+            $image = new ImageManager(new Driver());
+            $image->read('images/'.$imageName)->resize(512,512)->save('images/'.$imageName);
         }
         
         //product_content 저장

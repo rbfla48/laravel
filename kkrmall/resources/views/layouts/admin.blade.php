@@ -56,7 +56,7 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 상품목록
                             </a>
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="{{ route('admin.productRegist')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 상품등록
                             </a>

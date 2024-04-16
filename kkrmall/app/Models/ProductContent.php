@@ -9,4 +9,5 @@ class ProductContent extends Model
 {
     //use HasFactory;
     protected $table = 'product_content';
+    public $timestamps = false;
 }
