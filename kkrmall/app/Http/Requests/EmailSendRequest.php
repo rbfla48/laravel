@@ -24,7 +24,6 @@ class EmailSendRequest extends FormRequest
         return [
             'email' => 'required|email',
             'subject' => 'required',
-            'message' => 'required'
         ];
     }
 }

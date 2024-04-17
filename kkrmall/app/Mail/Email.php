@@ -32,6 +32,7 @@ class Email extends Mailable
         return new Content(
             markdown: 'emails.form',
             with: [
+                'code' => $this->emailHistory->code,
                 'message' => $this->emailHistory->message,
                 'url' => route('emailForm')
             ]

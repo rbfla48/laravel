@@ -8,6 +8,9 @@ use App\Http\Requests\EmailSendRequest;
 use App\Mail\Email;
 use App\Models\EmailHistory;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Support\Str;
 
 class EmailHistoryController extends Controller
 {
@@ -19,17 +22,23 @@ class EmailHistoryController extends Controller
         $this->emailHistory = $emailHistory;
     }
 
-    public function emailSend(Request $request){
-        // 유효성 검사 오류시 422 상태 코드로 반환
+    public function verificationCodeSend(Request $request){
 
-        
+        //임시생성
+        $user = new User;
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+        $user->verification_code = Str::random(6);
+        $user->save();
 
         // 이력 저장
         $emailHistory = new EmailHistory();
         
         $emailHistory->email = $request->email;
-        $emailHistory->subject = $request->subject;
-        $emailHistory->message = $request->message;
+        $emailHistory->subject = "[KKRMALL]인증메일 입니다.";
+        $emailHistory->code = $user->verification_code;
+        //$emailHistory->message = $request->message;
 
         $emailHistory->save();
 
@@ -41,6 +50,8 @@ class EmailHistoryController extends Controller
                 ->with([
                     'success' => '이메일을 성공적으로 발송했습니다.'
                 ]);
+        }else{
+            return false;
         }
     }
 }

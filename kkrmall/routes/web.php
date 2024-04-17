@@ -95,4 +95,6 @@ Route::get('/email', function () {
     return view('emailForm');
 })->name('emailForm');
 
-Route::post('/emailSend', [EmailHistoryController::class, 'emailSend'])->name('emailSend');
+Route::post('/verificationCodeSend', [EmailHistoryController::class, 'verificationCodeSend'])->name('verificationCodeSend');
+
+Route::post('/verificationCodeCheck', [RegisteredUserController::class, 'verificationCodeCheck'])->name('verificationCodeCheck');

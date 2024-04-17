@@ -1,9 +1,9 @@
 <x-guest-layout>
     <main>
-    <form method="POST" action="{{ route('register') }}">
+    <form id="register_form" method="POST" action="{{ route('register') }}">
         @csrf
         <div class="w-50 mx-auto p-5 container shadow p-3 mb-5 bg-body-tertiary rounded">
-        <div class="w-75">
+        <div class="w-100">
             <h4 class="mb-3">가입정보 입력</h4>
                 <div class="row g-3">
                     <div class="col-sm-3">
@@ -41,7 +41,7 @@
 
                     <div class="col-9">
                         <label for="phone" class="form-label">연락처 *</label>
-                        <div class="flex col-sm-6 mb-3">
+                        <div class="flex col-sm-9 mb-3">
                             <select class="form-control" id="phone_1" name="phone[]"
                                 fw-filter="isNumber&amp;isFill">
                                 <option value="010">010</option>
@@ -60,28 +60,38 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
-                      <label for="email" class="form-label">이메일</label>
-                      <div class="flex mb-3 col-sm-9">
-                        <input type="text" class="form-control" id="email" name="email">
-                      </div>
+                    <label for="email" class="form-label">이메일</label>
+                    <div>
+                        <div class="row mb-3" id="email_area">
+                            <div class="flex col-12">
+                                <div class="flex mb-3 col-sm-9">
+                                    <input type="text" class="form-control" id="email" name="email">
+                                </div>
+                                <div class="ms-3">
+                                    <input type="button" class="btn btn-light text-dark" id="btn-address" value="인증번호발송"
+                                            onclick="verificationCodeSend()">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <h4 class="mb-3">약관동의</h4>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="same-address">
-                        <label class="form-check-label" for="same-address">이용약관에 대하여 동의합니다.</label>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <textarea class="w-100">이용약관입니다.</textarea>
-                    </div>
+                    {{-- <h4 class="mb-3">약관동의</h4> --}}
+                    <div>
+                        <div class="form-check mt-5">
+                            <input type="checkbox" class="form-check-input" id="same-address">
+                            <label class="form-check-label" for="same-address">이용약관에 대하여 동의합니다.</label>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <textarea class="w-100">이용약관입니다.</textarea>
+                        </div>
 
-                    <div class="form-check mt-2">
-                        <input type="checkbox" class="form-check-input" id="save-info">
-                        <label class="form-check-label" for="save-info">개인정보취급방침에 대하여 동의합니다.</label>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <textarea class="w-100">개인정보취급방침</textarea>
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input" id="save-info">
+                            <label class="form-check-label" for="save-info">개인정보취급방침에 대하여 동의합니다.</label>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <textarea class="w-100">개인정보취급방침</textarea>
+                        </div>
                     </div>
                 </div>
                 
@@ -141,6 +151,45 @@
                   document.getElementById("address2").focus();
               }
             }).open();
+        }
+
+
+        function verificationCodeSend() {
+            var formData = $('#register_form').serialize();
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('verificationCodeSend') }}",
+                data: formData,
+                success: function(response) {
+                    // 성공적으로 인증번호를 발송한 경우의 처리
+                    alert('인증번호가 이메일로 발송되었습니다.');
+                    var verificationHtml = '<div><input type="text" id="verification_code" name="verification_code" placeholder="인증번호를 입력하세요">';
+                    verificationHtml += '<input type="button" class="btn btn-light text-dark" id="btn-address" value="인증번호확인" onclick="verificationCodeCheck()"></div>';
+                    $('#email_area').append(verificationHtml);
+
+                },
+                error: function(xhr, status, error) {
+                    // 오류 발생 시의 처리
+                    alert('인증번호 발송에 실패하였습니다. 다시 시도해 주세요.');
+                }
+            });
+        }
+
+        function verificationCodeCheck() {
+            var formData = $('#register_form').serialize();
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('verificationCodeCheck') }}",
+                data: formData,
+                success: function(response) {
+                    // 성공적으로 인증번호를 발송한 경우의 처리
+                    alert('이메일 인증되었습니다.');
+                },
+                error: function(xhr, status, error) {
+                    // 오류 발생 시의 처리
+                    alert('인증에 실패하였습니다. 다시 시도해 주세요.');
+                }
+            });
         }
     
     </script>
